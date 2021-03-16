@@ -25,11 +25,17 @@ class UpdateAvatarUserService {
     }
 
     if (user.avatar) {
+      console.log("directory", uploadConfig.directory);
       const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
-      const userAvatarFileExist = await fs.promises.stat(userAvatarFilePath);
+      console.log("userAvatarFilePath", userAvatarFilePath);
+      try {
+        const userAvatarFileExist = await fs.promises.stat(userAvatarFilePath);
 
-      if (userAvatarFileExist) {
-        await fs.promises.unlink(userAvatarFilePath);
+        if (userAvatarFileExist) {
+          await fs.promises.unlink(userAvatarFilePath);
+        }
+      } catch (err) {
+        console.log(err);
       }
     }
 

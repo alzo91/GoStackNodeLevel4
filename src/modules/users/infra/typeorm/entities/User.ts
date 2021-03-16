@@ -30,9 +30,11 @@ class User {
   @UpdateDateColumn()
   updated_at: Date;
 
+  avatar_url: string;
+
   @AfterLoad()
   getAvatar() {
-    this.avatar = `http://localhost:3333/files/${this.avatar}`;
+    this.avatar_url = `http://localhost:3333/files/${this.avatar}`;
   }
 }
 
