@@ -1,19 +1,24 @@
 import fs from "fs";
 import path from "path";
-import { getRepository } from "typeorm";
-import User from "../model/User";
-import uploadConfig from "../configs/upload";
-import AppError from "../errors/AppError";
-interface Request {
+import { injectable, inject } from "tsyringe";
+import User from "../infra/typeorm/entities/User";
+import uploadConfig from "@config/upload";
+import AppError from "@shared/errors/AppError";
+import IUsersRepositiry from "../repositories/IUsersRepositiry";
+
+interface IRequest {
   user_id: string;
   avatarFileName: string;
 }
-
+@injectable()
 class UpdateAvatarUserService {
-  public async execute({ user_id, avatarFileName }: Request): Promise<User> {
-    const usersRepository = getRepository(User);
+  constructor(
+    @inject("UsersRepository")
+    private usersRepository: IUsersRepositiry
+  ) {}
 
-    const user = await usersRepository.findOne({ where: { id: user_id } });
+  public async execute({ user_id, avatarFileName }: IRequest): Promise<User> {
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError("User does not authentication", 401);
@@ -30,7 +35,7 @@ class UpdateAvatarUserService {
 
     user.avatar = avatarFileName;
 
-    await usersRepository.save(user);
+    await this.usersRepository.save(user);
 
     return user;
   }

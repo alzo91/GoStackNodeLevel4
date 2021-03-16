@@ -1,16 +1,21 @@
-import { request, Router } from "express";
+import { Router } from "express";
+import { container } from "tsyringe";
 import multer from "multer";
-import uploadConfig from "../configs/upload";
-import CreateUserService from "../services/CreateUserService";
-import ensureAuth from "../Middlewares/ensureAuthenticated";
-import UpdateUserAvatarService from "../services/UpdateAvatarUserService";
+
+import uploadConfig from "@config/upload";
+import CreateUserService from "@modules/users/services/CreateUserService";
+import UpdateUserAvatarService from "@modules/users/services/UpdateAvatarUserService";
+
+import ensureAuth from "../middlewares/ensureAuthenticated";
+
 const upload = multer(uploadConfig);
 const usersRouter = Router();
 
 usersRouter.post("/", async (request, response) => {
   const { name, email, password } = request.body;
 
-  const createUserService = new CreateUserService();
+  const createUserService = container.resolve(CreateUserService);
+  // new CreateUserService(usersRepository);
 
   const user = await createUserService.execute({ name, email, password });
   delete user.password;
@@ -22,7 +27,8 @@ usersRouter.patch(
   ensureAuth,
   upload.single("avatar"),
   async (resquest, response) => {
-    const updateUserAvatarService = new UpdateUserAvatarService();
+    const updateUserAvatarService = container.resolve(UpdateUserAvatarService);
+    // new UpdateUserAvatarService(usersRepository);
 
     console.log(resquest.user.id, resquest.file.filename);
 

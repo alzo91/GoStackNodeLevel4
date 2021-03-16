@@ -1,5 +1,6 @@
 import { Router } from "express";
-import AuthenticationUserService from "../services/AuthenticationUserService";
+import AuthenticationUserService from "@modules/users/services/AuthenticationUserService";
+import { container } from "tsyringe";
 const sessionsRouter = Router();
 
 /** Esta criando o vetor de appointments */
@@ -8,10 +9,12 @@ const sessionsRouter = Router();
 sessionsRouter.post("/", async (request, response) => {
   const { email, password } = request.body;
 
-  const authUserService = new AuthenticationUserService();
+  const authUserService = container.resolve(AuthenticationUserService);
 
   const { user, token } = await authUserService.execute({ email, password });
+
   delete user.password;
+
   return response.status(201).json({ user, token });
 });
 
