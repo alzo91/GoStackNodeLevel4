@@ -34,7 +34,8 @@ class User {
 
   @AfterLoad()
   getAvatar() {
-    this.avatar_url = `http://localhost:3333/files/${this.avatar}`;
+    // this.avatar_url = `http://localhost:3333/files/${this.avatar}`;
+    this.avatar_url = `http://localhost:3333/files/`;
   }
 }
 
